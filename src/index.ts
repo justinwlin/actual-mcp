@@ -358,6 +358,11 @@ process.on('SIGINT', () => {
   process.exit(0);
 });
 
+process.on('unhandledRejection', (reason: unknown) => {
+  const message = reason instanceof Error ? reason.message : JSON.stringify(reason);
+  console.error(`Unhandled rejection: ${message}`);
+});
+
 main()
   .then(() => {
     if (!useSse) {

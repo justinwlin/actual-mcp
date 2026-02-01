@@ -75,6 +75,19 @@ export function error(message: string): CallToolResult {
  * @returns An error response object
  */
 export function errorFromCatch(err: unknown): CallToolResult {
-  const message = err instanceof Error ? err.message : String(err);
+  let message: string;
+  if (err instanceof Error) {
+    message = err.message;
+  } else if (typeof err === 'object' && err !== null && 'message' in err) {
+    message = String((err as { message: unknown }).message);
+  } else if (typeof err === 'string') {
+    message = err;
+  } else {
+    try {
+      message = JSON.stringify(err);
+    } catch {
+      message = String(err);
+    }
+  }
   return error(message);
 }
